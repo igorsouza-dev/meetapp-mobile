@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { StatusBar } from 'react-native';
+import '~/config/ReactotronConfig';
+import App from './App';
 
-export default function App() {
+export default function Index() {
   return (
-    <View>
-      <Text>Hello World!</Text>
-    </View>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#22202C" />
+      <App />
+    </>
   );
 }
