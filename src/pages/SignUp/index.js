@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { signUpRequest } from '~/store/modules/auth/actions';
 import {
   Container,
   Form,
@@ -12,13 +14,18 @@ import Background from '~/components/Background';
 import Logo from '~/components/Logo';
 
 export default function SignUp({ navigation }) {
+  const dispatch = useDispatch();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const emailRef = useRef();
   const passwordRef = useRef();
-  function handleSignUp() {}
+
+  function handleSignUp() {
+    dispatch(signUpRequest(name, email, password));
+  }
   return (
     <Background>
       <Container>

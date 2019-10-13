@@ -1,5 +1,9 @@
 import React, { useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import { signInRequest } from '~/store/modules/auth/actions';
+
 import {
   Container,
   Form,
@@ -12,11 +16,15 @@ import Background from '~/components/Background';
 import Logo from '~/components/Logo';
 
 export default function SignIn({ navigation }) {
+  const dispatch = useDispatch();
+  const loading = useSelector(state => state.auth.loading);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const passwordRef = useRef();
-  function handleSignIn() {}
+  function handleSignIn() {
+    dispatch(signInRequest(email, password));
+  }
   return (
     <Background>
       <Container>
@@ -45,7 +53,9 @@ export default function SignIn({ navigation }) {
             returnKeyType="send"
             onSubmitEditing={handleSignIn}
           />
-          <SubmitButton onPress={handleSignIn}>Sign In</SubmitButton>
+          <SubmitButton onPress={handleSignIn} loading={loading}>
+            Sign In
+          </SubmitButton>
         </Form>
         <SignLink onPress={() => navigation.navigate('SignUp')}>
           <SignLinkText>Create a free account</SignLinkText>
