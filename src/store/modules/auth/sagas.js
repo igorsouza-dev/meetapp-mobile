@@ -1,8 +1,7 @@
 import { takeLatest, call, put, all } from 'redux-saga/effects';
-import { Alert } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 import api from '~/services/api';
-
-import { signInSuccess, signFailure } from './actions';
+import { signInSuccess, signFailure, signInRequest } from './actions';
 
 export function* signIn({ payload }) {
   try {
@@ -38,7 +37,8 @@ export function* signUp({ payload }) {
       email,
       password,
     });
-    Alert.alert('', 'Sign Up was a success!');
+    ToastAndroid.show('You signed up successfully!', ToastAndroid.SHORT);
+    yield put(signInRequest(email, password));
   } catch (err) {
     let { message } = err;
     if (err.response) {

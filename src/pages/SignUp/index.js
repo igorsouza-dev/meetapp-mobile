@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { signUpRequest } from '~/store/modules/auth/actions';
 import {
@@ -15,6 +15,8 @@ import Logo from '~/components/Logo';
 
 export default function SignUp({ navigation }) {
   const dispatch = useDispatch();
+
+  const loading = useSelector(state => state.auth.loading);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -64,7 +66,9 @@ export default function SignUp({ navigation }) {
             returnKeyType="send"
             onSubmitEditing={handleSignUp}
           />
-          <SubmitButton onPress={handleSignUp}>Sign Up</SubmitButton>
+          <SubmitButton onPress={handleSignUp} loading={loading}>
+            Sign Up
+          </SubmitButton>
         </Form>
         <SignLink onPress={() => navigation.navigate('SignIn')}>
           <SignLinkText>Already have an account</SignLinkText>
