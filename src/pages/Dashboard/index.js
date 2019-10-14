@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
@@ -29,16 +29,19 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
+  const [listEnded, setListEnded] = useState(false);
 
-  useEffect(() => {
-    async function loadMeetups() {
-      setLoading(true);
+  async function loadMeetups() {
+    setLoading(true);
+    try {
       const response = await api.get('meetups', {
         params: {
           date,
+          page,
         },
       });
-      setLoading(false);
+      setRefreshing(false);
+
       const responseMeetups = response.data.map(meetup => {
         const formattedDate = format(
           parseISO(meetup.date),
@@ -49,28 +52,44 @@ export default function Dashboard() {
         );
         return { ...meetup, formattedDate };
       });
-      setMeetups(responseMeetups);
+
+      if (page === 1) {
+        setMeetups(responseMeetups);
+      } else if (responseMeetups.length) {
+        const merged = [...meetups, responseMeetups];
+        console.tron.log(merged);
+        setMeetups(merged);
+      } else {
+        setListEnded(true);
+      }
+    } catch (err) {
+      ToastAndroid.showWithGravity(
+        'There was an error while fetching the meetups.',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
     }
+    setLoading(false);
+  }
+  useEffect(() => {
+    setListEnded(false);
+    setPage(1);
     loadMeetups();
-  }, [date]);
+  }, [date]);// eslint-disable-line
 
   async function loadMore() {
-    setPage(page + 1);
-    setRefreshing(true);
-    const response = await api.get('meetups', {
-      params: {
-        date,
-        page,
-      },
-    });
-    setRefreshing(false);
-    if (response.data) {
-      setMeetups([...meetups, response.data]);
+    if (!listEnded && !refreshing && !loading) {
+      console.tron.log('loading more');
+      setPage(page + 1);
+      setRefreshing(true);
+      loadMeetups();
     }
   }
 
   function refresh() {
+    console.tron.log('refreshing');
     setPage(1);
+    loadMeetups();
   }
 
   return (
@@ -78,45 +97,42 @@ export default function Dashboard() {
       <Header />
       <DateSelector enabled={!loading} onChange={setDate} date={date} />
       <Container>
-        {loading && <ActivityIndicator color="#fff" size={25} />}
-        {!loading && (
-          <MeetupsList
-            onEndReachedThreshold={0.2}
-            ListEmptyComponent={() => (
-              <EmptyListText>No meetups found</EmptyListText>
-            )}
-            onEndReached={loadMore}
-            onRefresh={refresh}
-            refreshing={refreshing}
-            data={meetups}
-            keyExtractor={meetup => String(meetup.id)}
-            renderItem={({ item: meetup }) => (
-              <Meetup>
-                <Banner source={{ uri: meetup.url }} />
-                <MeetupInfo>
-                  <Title>{meetup.title}</Title>
-                  <InfoTextLine>
-                    <InfoIcon size={14} color="#999" name="event" />
-                    <InfoText>{meetup.formattedDate}</InfoText>
-                  </InfoTextLine>
-                  <InfoTextLine>
-                    <InfoIcon size={14} color="#999" name="place" />
-                    <InfoText>{meetup.localization}</InfoText>
-                  </InfoTextLine>
-                  <InfoTextLine>
-                    <InfoIcon size={14} color="#999" name="person" />
-                    <InfoText>
-                      Organizer: {meetup.User ? meetup.User.name : ''}
-                    </InfoText>
-                  </InfoTextLine>
-                  <SubscribeButton onPress={() => {}}>
-                    Subscribe
-                  </SubscribeButton>
-                </MeetupInfo>
-              </Meetup>
-            )}
-          />
-        )}
+        <MeetupsList
+          onEndReachedThreshold={0.2}
+          ListEmptyComponent={() => (
+            <EmptyListText>No meetups found</EmptyListText>
+          )}
+          FooterComponent={() => <ActivityIndicator color="#fff" size={25} />}
+          onEndReached={loadMore}
+          onRefresh={refresh}
+          refreshing={refreshing}
+          data={meetups}
+          initialNumToRender={10}
+          keyExtractor={meetup => String(meetup.id)}
+          renderItem={({ item: meetup }) => (
+            <Meetup>
+              <Banner source={{ uri: meetup.url }} />
+              <MeetupInfo>
+                <Title>{meetup.title}</Title>
+                <InfoTextLine>
+                  <InfoIcon size={14} color="#999" name="event" />
+                  <InfoText>{meetup.formattedDate}</InfoText>
+                </InfoTextLine>
+                <InfoTextLine>
+                  <InfoIcon size={14} color="#999" name="place" />
+                  <InfoText>{meetup.localization}</InfoText>
+                </InfoTextLine>
+                <InfoTextLine>
+                  <InfoIcon size={14} color="#999" name="person" />
+                  <InfoText>
+                    Organizer: {meetup.User ? meetup.User.name : ''}
+                  </InfoText>
+                </InfoTextLine>
+                <SubscribeButton onPress={() => {}}>Subscribe</SubscribeButton>
+              </MeetupInfo>
+            </Meetup>
+          )}
+        />
       </Container>
     </Background>
   );
