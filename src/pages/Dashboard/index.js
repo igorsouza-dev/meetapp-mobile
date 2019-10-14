@@ -57,7 +57,6 @@ export default function Dashboard() {
         setMeetups(responseMeetups);
       } else if (responseMeetups.length) {
         const merged = [...meetups, responseMeetups];
-        console.tron.log(merged);
         setMeetups(merged);
       } else {
         setListEnded(true);
@@ -72,23 +71,24 @@ export default function Dashboard() {
     setLoading(false);
   }
   useEffect(() => {
+    setRefreshing(true);
     setListEnded(false);
+    setMeetups([]);
     setPage(1);
     loadMeetups();
   }, [date]);// eslint-disable-line
 
   async function loadMore() {
-    if (!listEnded && !refreshing && !loading) {
-      console.tron.log('loading more');
-      setPage(page + 1);
+    if (!listEnded && !refreshing && meetups.length >= 2) {
       setRefreshing(true);
+      setPage(page + 1);
       loadMeetups();
     }
   }
 
   function refresh() {
-    console.tron.log('refreshing');
     setPage(1);
+    setListEnded(false);
     loadMeetups();
   }
 
@@ -99,9 +99,9 @@ export default function Dashboard() {
       <Container>
         <MeetupsList
           onEndReachedThreshold={0.2}
-          ListEmptyComponent={() => (
-            <EmptyListText>No meetups found</EmptyListText>
-          )}
+          ListEmptyComponent={() =>
+            !refreshing && <EmptyListText>No meetups found</EmptyListText>
+          }
           FooterComponent={() => <ActivityIndicator color="#fff" size={25} />}
           onEndReached={loadMore}
           onRefresh={refresh}
@@ -111,7 +111,7 @@ export default function Dashboard() {
           keyExtractor={meetup => String(meetup.id)}
           renderItem={({ item: meetup }) => (
             <Meetup>
-              <Banner source={{ uri: meetup.url }} />
+              <Banner source={{ uri: meetup.File ? meetup.File.url : '' }} />
               <MeetupInfo>
                 <Title>{meetup.title}</Title>
                 <InfoTextLine>

@@ -12,6 +12,7 @@ export const Container = styled.View`
 
 export const MeetupsList = styled.FlatList`
   align-self: stretch;
+  margin-bottom: 100px;
 `;
 
 export const Meetup = styled.View`
