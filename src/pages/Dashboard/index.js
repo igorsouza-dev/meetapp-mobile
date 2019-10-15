@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ToastAndroid } from 'react-native';
+import { ActivityIndicator, ToastAndroid, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
@@ -50,7 +50,7 @@ export default function Dashboard() {
             locale: pt,
           }
         );
-        return { ...meetup, formattedDate };
+        return { ...meetup, formattedDate, loading: false };
       });
 
       if (page === 1) {
@@ -65,7 +65,7 @@ export default function Dashboard() {
       ToastAndroid.showWithGravity(
         'There was an error while fetching the meetups.',
         ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
+        ToastAndroid.CENTER
       );
     }
     setLoading(false);
@@ -78,7 +78,7 @@ export default function Dashboard() {
     loadMeetups();
   }, [date]);// eslint-disable-line
 
-  async function loadMore() {
+  function loadMore() {
     if (!listEnded && !refreshing && meetups.length >= 2) {
       setRefreshing(true);
       setPage(page + 1);
@@ -91,7 +91,25 @@ export default function Dashboard() {
     setListEnded(false);
     loadMeetups();
   }
-
+  async function handleSubscribeMeetup(id) {
+    try {
+      await api.post(`subscriptions/${id}`);
+      ToastAndroid.showWithGravity(
+        'Subscribed successfully',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+    } catch (err) {
+      let message =
+        'There was an error while trying to subscribe to this meetup';
+      if (err.response) {
+        if (err.response.data) {
+          message = err.response.data.error;
+        }
+      }
+      Alert.alert('Subscription failed!', message);
+    }
+  }
   return (
     <Background>
       <Header />
@@ -110,7 +128,7 @@ export default function Dashboard() {
           initialNumToRender={10}
           keyExtractor={meetup => String(meetup.id)}
           renderItem={({ item: meetup }) => (
-            <Meetup>
+            <Meetup past={meetup.past}>
               <Banner source={{ uri: meetup.File ? meetup.File.url : '' }} />
               <MeetupInfo>
                 <Title>{meetup.title}</Title>
@@ -128,7 +146,13 @@ export default function Dashboard() {
                     Organizer: {meetup.User ? meetup.User.name : ''}
                   </InfoText>
                 </InfoTextLine>
-                <SubscribeButton onPress={() => {}}>Subscribe</SubscribeButton>
+                {!meetup.past && (
+                  <SubscribeButton
+                    onPress={() => handleSubscribeMeetup(meetup.id)}
+                  >
+                    Subscribe
+                  </SubscribeButton>
+                )}
               </MeetupInfo>
             </Meetup>
           )}

@@ -19,6 +19,8 @@ export const Meetup = styled.View`
   border-radius: 4px;
   background: #fff;
   margin-bottom: 15px;
+
+  opacity: ${props => (props.past ? 0.8 : 1)};
 `;
 
 export const Title = styled.Text`
