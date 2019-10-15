@@ -20,12 +20,13 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const [listEnded, setListEnded] = useState(false);
 
-  async function loadMeetups() {
+  async function loadMeetups(pg) {
+    setRefreshing(true);
     try {
       const response = await api.get('meetups', {
         params: {
           date,
-          page,
+          page: pg,
         },
       });
       setRefreshing(false);
@@ -33,7 +34,7 @@ export default function Dashboard() {
       const responseMeetups = response.data.map(meetup => {
         const formattedDate = format(
           parseISO(meetup.date),
-          "dd 'de' MMMM', às' hh'h'",
+          "dd 'de' MMMM 'de' yyyy', às' HH'h'",
           {
             locale: pt,
           }
@@ -41,11 +42,10 @@ export default function Dashboard() {
         return { ...meetup, formattedDate };
       });
 
-      if (page === 1) {
+      if (pg === 1) {
         setMeetups(responseMeetups);
       } else if (responseMeetups.length) {
-        const merged = [...meetups, responseMeetups];
-        setMeetups(merged);
+        setMeetups([...meetups, responseMeetups]);
       } else {
         setListEnded(true);
       }
@@ -62,21 +62,21 @@ export default function Dashboard() {
     setListEnded(false);
     setMeetups([]);
     setPage(1);
-    loadMeetups();
-  }, [date]);// eslint-disable-line
+    loadMeetups(1);
+  }, [date]); // eslint-disable-line
 
   function loadMore() {
-    if (!listEnded && !refreshing && meetups.length >= 2) {
+    if (!listEnded && !refreshing) {
       setRefreshing(true);
+      loadMeetups(page + 1);
       setPage(page + 1);
-      loadMeetups();
     }
   }
 
   function refresh() {
     setPage(1);
     setListEnded(false);
-    loadMeetups();
+    loadMeetups(1);
   }
   async function handleSubscribeMeetup(id) {
     setRefreshing(true);

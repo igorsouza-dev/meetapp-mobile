@@ -27,7 +27,7 @@ export function Subscriptions({ isFocused }) {
       const responseSubscriptions = response.data.map(subscription => {
         const formattedDate = format(
           parseISO(subscription.Meetup.date),
-          "dd 'de' MMMM', às' hh'h'",
+          "dd 'de' MMMM 'de' yyyy', às' HH'h'",
           {
             locale: pt,
           }
