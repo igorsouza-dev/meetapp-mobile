@@ -92,6 +92,7 @@ export default function Dashboard() {
     loadMeetups();
   }
   async function handleSubscribeMeetup(id) {
+    setRefreshing(true);
     try {
       await api.post(`subscriptions/${id}`);
       ToastAndroid.showWithGravity(
@@ -99,6 +100,7 @@ export default function Dashboard() {
         ToastAndroid.SHORT,
         ToastAndroid.CENTER
       );
+      setRefreshing(false);
     } catch (err) {
       let message =
         'There was an error while trying to subscribe to this meetup';
@@ -108,6 +110,7 @@ export default function Dashboard() {
         }
       }
       Alert.alert('Subscription failed!', message);
+      setRefreshing(false);
     }
   }
   return (
