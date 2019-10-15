@@ -1,6 +1,6 @@
 # Meetapp - Mobile
 
-Mobile APP made for the MeetApp project.
+Mobile APP made for the MeetApp project using React Native.
 
 ## What is Meetapp?
 
@@ -19,6 +19,10 @@ Mobile APP made for the MeetApp project.
 ## Before starting
 
 Edit the file `src/services/api.js` and change the `baseURL` to match the url of your backend.
+
+#### Disclaimer
+
+This project was tested **only** on Android.
 
 ---
 
