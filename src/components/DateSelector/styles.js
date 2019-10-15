@@ -18,7 +18,9 @@ export const Button = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
-
+export const DateButton = styled.TouchableOpacity`
+  background: transparent;
+`;
 export const DateText = styled.Text`
   font-weight: bold;
   color: #fff;

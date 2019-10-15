@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
+import { DatePickerAndroid } from 'react-native';
 import { format, subDays, addDays } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 
-import { Container, Button, DateText } from './styles';
+import { Container, Button, DateText, DateButton } from './styles';
 
 export default function DateSelector({ enabled, onChange, date }) {
   const formattedDate = useMemo(
@@ -20,12 +21,25 @@ export default function DateSelector({ enabled, onChange, date }) {
     onChange(addDays(date, 1));
   }
 
+  async function handleOpenPicker() {
+    const { action, year, month, day } = await DatePickerAndroid.open({
+      mode: 'spinner',
+      date,
+    });
+
+    if (action === DatePickerAndroid.dateSetAction) {
+      onChange(new Date(year, month, day));
+    }
+  }
+
   return (
     <Container>
       <Button disabled={!enabled} onPress={subDay}>
         <Icon size={30} color="#fff" name="chevron-left" />
       </Button>
-      <DateText>{formattedDate}</DateText>
+      <DateButton onPress={handleOpenPicker}>
+        <DateText>{formattedDate}</DateText>
+      </DateButton>
       <Button disabled={!enabled} onPress={addDay}>
         <Icon size={30} color="#fff" name="chevron-right" />
       </Button>
