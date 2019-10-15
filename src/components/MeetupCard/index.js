@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
   Meetup,
@@ -50,3 +51,30 @@ export default function MeetupCard({
     </Meetup>
   );
 }
+
+MeetupCard.defaultProps = {
+  onSubscribe: () => {},
+  onUnsubscribe: () => {},
+  canSubscribe: false,
+  canUnsubscribe: false,
+};
+
+MeetupCard.propTypes = {
+  meetup: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    localization: PropTypes.string.isRequired,
+    formattedDate: PropTypes.string.isRequired,
+    past: PropTypes.bool.isRequired,
+    File: PropTypes.shape({
+      url: PropTypes.string,
+    }),
+    User: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+  }).isRequired,
+  onSubscribe: PropTypes.func,
+  onUnsubscribe: PropTypes.func,
+  canSubscribe: PropTypes.bool,
+  canUnsubscribe: PropTypes.bool,
+};
