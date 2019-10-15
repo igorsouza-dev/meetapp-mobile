@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ToastAndroid } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
+import PropTypes from 'prop-types';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import { format, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
@@ -12,7 +16,7 @@ import api from '~/services/api';
 
 import { Container, MeetupsList, EmptyListText } from './styles';
 
-export default function Subscriptions() {
+export function Subscriptions({ isFocused }) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -43,7 +47,7 @@ export default function Subscriptions() {
   }
   useEffect(() => {
     loadSubscriptions();
-  }, []); //eslint-disable-line
+  }, [isFocused]); //eslint-disable-line
 
   function refresh() {
     loadSubscriptions();
@@ -101,3 +105,8 @@ Subscriptions.navigationOptions = {
     <Icon name="local-offer" color={tintColor} size={20} />
   ),
 };
+Subscriptions.propTypes = {
+  isFocused: PropTypes.bool.isRequired,
+};
+
+export default withNavigationFocus(Subscriptions);
