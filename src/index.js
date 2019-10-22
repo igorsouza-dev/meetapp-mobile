@@ -10,10 +10,12 @@ import '~/config/ReactotronConfig';
 import { store, persistor } from './store';
 import App from './App';
 
+import config from '../config';
+
 class Index extends Component {
   constructor(props) {
     super(props);
-    OneSignal.init('c135a8d2-f0e0-4071-a596-3f56042925c3');
+    OneSignal.init(config.oneSignalId);
     OneSignal.addEventListener('received', this.onReceived);
     OneSignal.addEventListener('opened', this.onOpened);
     OneSignal.addEventListener('ids', this.onIds);
@@ -25,11 +27,11 @@ class Index extends Component {
     OneSignal.removeEventListener('ids', this.onIds);
   }
 
-  onReceived = data => { };
+  onReceived = data => {};
 
-  onOpened = notification => { };
+  onOpened = notification => {};
 
-  onIds = id => { };
+  onIds = id => {};
 
   render() {
     return (

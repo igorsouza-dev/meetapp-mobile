@@ -18,7 +18,16 @@ Mobile APP made for the MeetApp project using React Native.
 
 ## Before starting
 
-Edit the file `src/services/api.js` and change the `baseURL` to match the url of your backend.
+Create a `config.js` file at the root of the project. This file should export the base URL of your backend and the [OneSignal](https://onesignal.com/) ID. I'm using OneSignal for the push notifications.
+The file should look like:
+
+```
+module.exports = {
+  baseURL: 'http://some-ip-or-url.com',
+  oneSignalId: '1234567890-123456789',
+};
+
+```
 
 #### Disclaimer
 
