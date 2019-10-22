@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'react-native';
+
 import CodePush from 'react-native-code-push';
 import OneSignal from 'react-native-onesignal';
 
@@ -10,12 +11,10 @@ import '~/config/ReactotronConfig';
 import { store, persistor } from './store';
 import App from './App';
 
-import config from '../config';
-
 class Index extends Component {
   constructor(props) {
     super(props);
-    OneSignal.init(config.oneSignalId);
+    OneSignal.init('c135a8d2-f0e0-4071-a596-3f56042925c3');
     OneSignal.addEventListener('received', this.onReceived);
     OneSignal.addEventListener('opened', this.onOpened);
     OneSignal.addEventListener('ids', this.onIds);
