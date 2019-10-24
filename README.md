@@ -18,16 +18,23 @@ Mobile APP made for the MeetApp project using React Native.
 
 ## Before starting
 
-Create a `config.js` file at the root of the project. This file should export the base URL of your backend and the [OneSignal](https://onesignal.com/) ID. I'm using OneSignal for the push notifications.
-The file should look like:
+You should change some files before running the project.
+This file should export the base URL of your backend and the [OneSignal](https://onesignal.com/) ID. I'm using OneSignal for the push notifications.
+At `src/index.js`:
 
 ```
-module.exports = {
-  baseURL: 'http://some-ip-or-url.com',
-  oneSignalId: '1234567890-123456789',
-};
-
+class Index extends Component {
+  constructor(props) {
+    super(props);
+    OneSignal.init('c135a8d2-f0e0-4071-a596-3f56042925c3');
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
+  }
 ```
+
+Inform your OneSignal ID at `OneSignal.init('c135a8d2-f0e0-4071-a596-3f56042925c3');`
+Then, change the baseURL of axios at `services/api` to the your api address.
 
 #### Disclaimer
 
