@@ -34,7 +34,7 @@ class Index extends Component {
 ```
 
 Inform your OneSignal ID at `OneSignal.init('c135a8d2-f0e0-4071-a596-3f56042925c3');`
-Then, change the baseURL of axios at `services/api` to the your api address.
+Then, change the baseURL of axios at `services/api` to your api address.
 
 #### Disclaimer
 
