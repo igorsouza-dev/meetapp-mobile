@@ -93,7 +93,11 @@ export default function Dashboard() {
         'There was an error while trying to subscribe to this meetup';
       if (err.response) {
         if (err.response.data) {
+          console.tron.log(err.response.data);
           message = err.response.data.error;
+          if (message instanceof Object) {
+            message = message.message;
+          }
         }
       }
       Alert.alert('Subscription failed!', message);
